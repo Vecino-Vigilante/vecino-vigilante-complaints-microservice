@@ -30,6 +30,12 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
+4. Do the database migration
+
+```bash
+python3 -m app.infrastructure.configs.migrate_database
+```
+
 4. Run the server
 
 ```bash
