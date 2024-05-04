@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .infrastructure.docs.openapi_tags import openapi_tags
 from .infrastructure.routers.management_router import management_router
+from .infrastructure.routers.marker_router import marker_router
 
 load_dotenv()
 
@@ -20,6 +21,7 @@ app = FastAPI(
 )
 
 app.include_router(management_router, prefix="/management", tags=["Management"])
+app.include_router(marker_router, prefix="/marker", tags=["Marker"])
 
 app.add_middleware(
     CORSMiddleware,
