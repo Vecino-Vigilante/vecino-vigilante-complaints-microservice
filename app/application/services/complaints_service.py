@@ -21,6 +21,12 @@ class ComplaintsService:
         self.images_repository = images_repository
         self.users_repository = users_repository
         self.markers_repository = markers_repository
+        
+    def get_complaints(self):
+        complaints = self.complaints_repository.get_complaints()
+        for complaint in complaints:
+            complaint.user = self.get_complaint_user(complaint.user.id)
+        return complaints
 
     def get_filepath(self, path: str, file_bytes: bytes):
         extension = imghdr.what(None, h=file_bytes)
@@ -33,12 +39,16 @@ class ComplaintsService:
         complaint.image_url = self.images_repository.upload_object(file_bytes, relative_path)
         new_complaint = self.complaints_repository.add_complaint(complaint)
         complaint.location.incident_id = new_complaint.id
-        new_complaint.location = self.create_marker(complaint.location)
         new_complaint.user = self.get_complaint_user(new_complaint.user.id)
+        self.create_marker(complaint.location)
+        # new_complaint.location = self.get_marker_by_incident_id(new_complaint.id)
         return new_complaint
     
     def create_marker(self, marker: LocationModel):
         return self.markers_repository.add_marker(marker)
+    
+    def get_marker_by_incident_id(self, incident_id: UUID):
+        return self.markers_repository.get_marker_by_incident_id(incident_id)
     
     def get_complaint_user(self, user_id: UUID):
         return self.users_repository.get_user(user_id)

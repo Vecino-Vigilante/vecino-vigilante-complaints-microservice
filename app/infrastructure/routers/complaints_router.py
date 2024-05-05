@@ -1,4 +1,3 @@
-from pprint import pprint
 from app.application.services.complaints_service import ComplaintsService
 from app.infrastructure.dto.complaint_request_dto import ComplaintRequestDTO
 from app.infrastructure.mappers.complaint_mappers import (
@@ -25,6 +24,14 @@ complaints_service = ComplaintsService(
     users_repository=UsersRepositoryImpl(),
     markers_repository=MarkersRepositoryImpl(),
 )
+
+
+@complaints_router.get("")
+def get_complaints():
+    return [
+        map_complaint_model_to_complaint_dto(complaint)
+        for complaint in complaints_service.get_complaints()
+    ]
 
 
 @complaints_router.post("", status_code=status.HTTP_201_CREATED)

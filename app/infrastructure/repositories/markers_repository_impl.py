@@ -10,13 +10,14 @@ class MarkersRepositoryImpl(MarkersRepository):
     MARKERS_SERVICE_URL = getenv("MARKERS_SERVICE_URL")
     def add_marker(self, marker: LocationModel) -> LocationModel:
         # TODO: Implement the code to request the markers service when it is ready
-        return LocationModel(
-            id=str(uuid4()).replace("-", ""),
-            incident_id=marker.incident_id,
-            latitude=marker.latitude,
-            longitude=marker.longitude,
-            direction=marker.direction,
-        )
+        pass
+        # return LocationModel(
+        #     id=str(uuid4()).replace("-", ""),
+        #     incident_id=marker.incident_id,
+        #     latitude=marker.latitude,
+        #     longitude=marker.longitude,
+        #     direction=marker.direction,
+        # )
     
     def get_marker_by_incident_id(self, incident_id: UUID) -> LocationModel:
         with httpx.Client() as client:

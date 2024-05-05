@@ -8,6 +8,10 @@ class ComplaintsRepository(ABC):
     @abstractmethod
     def add_complaint(self, complaint: ComplaintModel) -> ComplaintModel:
         pass
+    
+    @abstractmethod
+    def get_complaints(self) -> list[ComplaintModel]:
+        pass
 
     @abstractmethod
     def get_complaint(self, incident_id: UUID) -> ComplaintModel:

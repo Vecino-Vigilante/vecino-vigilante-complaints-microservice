@@ -27,5 +27,5 @@ class ComplaintDTO(BaseModel):
     description: str
     date: datetime
     image_url: str
-    user: UserDTO
-    location: LocationDTO
+    user: UserDTO | None
+    # location: LocationDTO
