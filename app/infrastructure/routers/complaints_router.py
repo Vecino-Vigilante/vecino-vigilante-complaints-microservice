@@ -1,3 +1,4 @@
+from uuid import UUID
 from app.application.services.complaints_service import ComplaintsService
 from app.infrastructure.dto.complaint_request_dto import ComplaintRequestDTO
 from app.infrastructure.mappers.complaint_mappers import (
@@ -33,6 +34,11 @@ def get_complaints():
         for complaint in complaints_service.get_complaints()
     ]
 
+@complaints_router.get("/{incident_id}")
+def get_complaint_by_incident_id(incident_id: UUID):
+    return map_complaint_model_to_complaint_dto(
+        complaints_service.get_complaint_by_incident_id(incident_id)
+    )
 
 @complaints_router.post("", status_code=status.HTTP_201_CREATED)
 def create_complaint(complaint_request: ComplaintRequestDTO):

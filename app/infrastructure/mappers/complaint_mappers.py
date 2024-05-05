@@ -70,5 +70,4 @@ def map_complaint_model_to_complaint_dto(
         date=complaint_model.date,
         image_url=complaint_model.image_url,
         user=user_model_to_user_dto(complaint_model.user),
-        location=None
     )

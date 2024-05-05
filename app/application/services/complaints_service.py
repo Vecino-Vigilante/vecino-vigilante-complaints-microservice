@@ -27,6 +27,11 @@ class ComplaintsService:
         for complaint in complaints:
             complaint.user = self.get_complaint_user(complaint.user.id)
         return complaints
+    
+    def get_complaint_by_incident_id(self, incident_id: UUID):
+        complaint = self.complaints_repository.get_complaint(incident_id)
+        complaint.user = self.get_complaint_user(complaint.user.id)
+        return complaint
 
     def get_filepath(self, path: str, file_bytes: bytes):
         extension = imghdr.what(None, h=file_bytes)
