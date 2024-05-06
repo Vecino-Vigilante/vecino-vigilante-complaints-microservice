@@ -1,12 +1,11 @@
 from app.domain.models.complaint_model import ComplaintModel
 from app.domain.models.complaint_type import ComplaintTypeModel
 from app.domain.models.user_model import UserModel
-from app.infrastructure.dto.complaint_request_dto import ComplaintRequestDTO
-from app.infrastructure.dto.complaint_response_dto import ComplaintDTO, TypeDTO
+from app.infrastructure.dto.complaint_request_dto import ComplaintRequestDTO, ComplaintUpdateDTO
+from app.infrastructure.dto.complaint_response_dto import ComplaintDTO
 from app.infrastructure.entities.complaint_entity import Complaint
 from app.infrastructure.mappers.complaint_types_mappers import map_complaint_type_model_to_complaint_type_dto
 from app.infrastructure.mappers.location_mappers import (
-    location_model_to_location_dto,
     location_req_dto_to_location_model,
 )
 from app.infrastructure.mappers.user_mappers import (
@@ -70,4 +69,17 @@ def map_complaint_model_to_complaint_dto(
         date=complaint_model.date,
         image_url=complaint_model.image_url,
         user=user_model_to_user_dto(complaint_model.user),
+    )
+
+def map_complaint_update_dto_to_complaint_model(
+    complaint_dto: ComplaintUpdateDTO,
+) -> ComplaintModel:
+    return ComplaintModel(
+        id=complaint_dto.id,
+        type = ComplaintTypeModel(id=complaint_dto.type_id, name=None),
+        description=complaint_dto.description,
+        date=complaint_dto.date,
+        image_url=None,
+        user=None,
+        location=None,
     )

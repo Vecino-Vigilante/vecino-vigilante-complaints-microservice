@@ -14,7 +14,7 @@ class ComplaintModel:
         description: str,
         date: datetime,
         image_url: str | None,
-        user: UserModel,
+        user: UserModel | None,
         location: LocationModel | None,
     ):
         self.id = id

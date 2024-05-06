@@ -17,6 +17,10 @@ class MarkersRepositoryImpl(MarkersRepository):
             response = client.get(f"{self.MARKERS_SERVICE_URL}/markers/{incident_id}")
             return LocationModel(**response.json())
         
+    def update_marker(self, marker: LocationModel) -> LocationModel:
+        # TODO: Request through rabbitmq to update the marker
+        pass
+        
     def delete_marker(self, incident_id: UUID) -> None:
         # TODO: Request through rabbitmq to delete the marker
         pass

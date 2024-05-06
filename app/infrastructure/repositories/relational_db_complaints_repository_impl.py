@@ -48,6 +48,23 @@ class RelationalDBComplaintsRepositoryImpl(ComplaintsRepository):
             )
         return complaint_model
 
+    def update_complaint(self, complaint: ComplaintModel) -> ComplaintModel:
+        with Session(db_engine) as session:
+            with Session(db_engine) as session:
+                complaint_entity = session.get(Complaint, complaint.id)
+                complaint_entity.type_id = complaint.type.id
+                complaint_entity.description = complaint.description
+                complaint_entity.date = complaint.date
+                complaint_entity.image_url = (
+                    complaint.image_url
+                    if complaint.image_url
+                    else complaint_entity.image_url
+                )
+                session.add(complaint_entity)
+                session.commit()
+                session.refresh(complaint_entity)
+                return self.get_complaint(complaint_entity.id)
+
     def delete_complaint(self, incident_id: UUID) -> None:
         with Session(db_engine) as session:
             complaint = session.exec(

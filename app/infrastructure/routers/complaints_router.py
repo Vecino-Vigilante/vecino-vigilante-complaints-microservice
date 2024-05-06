@@ -1,10 +1,11 @@
 from uuid import UUID
 from app.application.services.complaints_service import ComplaintsService
 from app.domain.exceptions.resource_not_found_exception import ResourceNotFoundException
-from app.infrastructure.dto.complaint_request_dto import ComplaintRequestDTO
+from app.infrastructure.dto.complaint_request_dto import ComplaintRequestDTO, ComplaintUpdateDTO
 from app.infrastructure.mappers.complaint_mappers import (
     map_complaint_model_to_complaint_dto,
     map_complaint_req_dto_to_complaint_model,
+    map_complaint_update_dto_to_complaint_model,
 )
 from app.infrastructure.repositories.awss3_images_repository_impl import (
     AWSS3ImagesRepositoryImpl,
@@ -67,3 +68,17 @@ def delete_complaint(incident_id: UUID):
             status_code=status.HTTP_404_NOT_FOUND, 
             detail="Complaint not found"
         )
+
+@complaints_router.put("")
+def update_complaint(complaint: ComplaintUpdateDTO):
+    try:
+        updated_complaint = complaints_service.update_complaint(
+            map_complaint_update_dto_to_complaint_model(complaint),
+            complaint.resource,
+        )
+        return map_complaint_model_to_complaint_dto(updated_complaint)
+    except ResourceNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Complaint not found"
+        )  
