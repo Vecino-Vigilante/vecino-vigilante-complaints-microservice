@@ -23,12 +23,22 @@ class RelationalDBComplaintsRepositoryImpl(ComplaintsRepository):
             session.refresh(complaint_entity)
         return self.get_complaint(complaint_entity.id)
 
-    def get_complaints(self) -> list[ComplaintModel]:
+    def get_complaints(
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        type_id: UUID | None = None,
+    ) -> list[ComplaintModel]:
         with Session(db_engine) as session:
             complaints = []
-            result = session.exec(
-                select(Complaint, ComplaintTypes).join(ComplaintTypes, isouter=True)
-            )
+            query = select(Complaint, ComplaintTypes).join(ComplaintTypes, isouter=True)
+            if start_date:
+                query = query.where(Complaint.date >= start_date)
+            if end_date:
+                query = query.where(Complaint.date <= end_date)
+            if type_id:
+                query = query.where(Complaint.type_id == type_id)
+            result = session.exec(query)
             for complaint, complaint_type in result:
                 complaint_model = map_complaint_entity_to_complaint_model(complaint)
                 complaint_model.type = (
