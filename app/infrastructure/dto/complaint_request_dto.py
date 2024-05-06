@@ -1,14 +1,13 @@
 from pydantic import BaseModel
 from datetime import datetime
 from uuid import UUID
-from decimal import Decimal
 
 class UserRequestDTO(BaseModel):
     id: UUID
     
 class LocationRequestDTO(BaseModel):
-    latitude: Decimal
-    longitude: Decimal
+    latitude: float
+    longitude: float
     direction: str
         
         
