@@ -1,3 +1,4 @@
+from datetime import date
 from uuid import UUID
 from app.application.services.complaints_service import ComplaintsService
 from app.domain.exceptions.resource_not_found_exception import ResourceNotFoundException
@@ -30,10 +31,10 @@ complaints_service = ComplaintsService(
 
 
 @complaints_router.get("")
-def get_complaints():
+def get_complaints(start_date: date | None = None, end_date: date | None = None, type_id: UUID | None = None):
     return [
         map_complaint_model_to_complaint_dto(complaint)
-        for complaint in complaints_service.get_complaints()
+        for complaint in complaints_service.get_complaints(start_date, end_date, type_id)
     ]
 
 

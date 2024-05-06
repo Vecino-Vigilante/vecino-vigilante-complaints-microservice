@@ -23,8 +23,8 @@ class ComplaintsService:
         self.users_repository = users_repository
         self.markers_repository = markers_repository
         
-    def get_complaints(self):
-        complaints = self.complaints_repository.get_complaints()
+    def get_complaints(self, start_date: str | None = None, end_date: str | None = None, type_id: UUID | None = None):
+        complaints = self.complaints_repository.get_complaints(start_date, end_date, type_id)
         for complaint in complaints:
             complaint.user = self.get_complaint_user(complaint.user.id)
         return complaints
