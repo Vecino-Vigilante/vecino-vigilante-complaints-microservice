@@ -13,3 +13,11 @@ class MarkersRepository(ABC):
     @abstractmethod
     def get_marker_by_incident_id(self, incident_id: UUID) -> LocationModel:
         pass
+    
+    @abstractmethod
+    def update_marker(self, marker: LocationModel) -> LocationModel:
+        pass
+    
+    @abstractmethod
+    def delete_marker(self, incident_id: UUID) -> None:
+        pass
