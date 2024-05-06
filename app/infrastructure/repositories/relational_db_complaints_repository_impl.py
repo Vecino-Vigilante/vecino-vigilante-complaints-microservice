@@ -9,7 +9,9 @@ from app.infrastructure.mappers.complaint_mappers import (
     map_complaint_entity_to_complaint_model,
     map_complaint_model_to_complaint_entity,
 )
-from app.infrastructure.mappers.complaint_types_mappers import map_complaint_type_entity_to_complaint_type_model
+from app.infrastructure.mappers.complaint_types_mappers import (
+    map_complaint_type_entity_to_complaint_type_model,
+)
 
 
 class RelationalDBComplaintsRepositoryImpl(ComplaintsRepository):
@@ -20,20 +22,36 @@ class RelationalDBComplaintsRepositoryImpl(ComplaintsRepository):
             session.commit()
             session.refresh(complaint_entity)
         return self.get_complaint(complaint_entity.id)
-    
+
     def get_complaints(self) -> list[ComplaintModel]:
         with Session(db_engine) as session:
             complaints = []
-            result = session.exec(select(Complaint, ComplaintTypes).join(ComplaintTypes, isouter=True))
+            result = session.exec(
+                select(Complaint, ComplaintTypes).join(ComplaintTypes, isouter=True)
+            )
             for complaint, complaint_type in result:
                 complaint_model = map_complaint_entity_to_complaint_model(complaint)
-                complaint_model.type = map_complaint_type_entity_to_complaint_type_model(complaint_type)
+                complaint_model.type = (
+                    map_complaint_type_entity_to_complaint_type_model(complaint_type)
+                )
                 complaints.append(complaint_model)
             return complaints
 
     def get_complaint(self, incident_id: UUID) -> ComplaintModel:
         with Session(db_engine) as session:
             complaint = session.get(Complaint, incident_id)
+            if not complaint:
+                return None
             complaint_model = map_complaint_entity_to_complaint_model(complaint)
-            complaint_model.type = map_complaint_type_entity_to_complaint_type_model(complaint.incident_type)
+            complaint_model.type = map_complaint_type_entity_to_complaint_type_model(
+                complaint.incident_type
+            )
         return complaint_model
+
+    def delete_complaint(self, incident_id: UUID) -> None:
+        with Session(db_engine) as session:
+            complaint = session.exec(
+                select(Complaint).where(Complaint.id == incident_id)
+            ).one()
+            session.delete(complaint)
+            session.commit()

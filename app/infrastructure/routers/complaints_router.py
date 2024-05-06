@@ -1,5 +1,6 @@
 from uuid import UUID
 from app.application.services.complaints_service import ComplaintsService
+from app.domain.exceptions.resource_not_found_exception import ResourceNotFoundException
 from app.infrastructure.dto.complaint_request_dto import ComplaintRequestDTO
 from app.infrastructure.mappers.complaint_mappers import (
     map_complaint_model_to_complaint_dto,
@@ -14,7 +15,7 @@ from app.infrastructure.repositories.markers_repository_impl import (
 from app.infrastructure.repositories.relational_db_complaints_repository_impl import (
     RelationalDBComplaintsRepositoryImpl,
 )
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 
 from app.infrastructure.repositories.users_repository_impl import UsersRepositoryImpl
 
@@ -34,11 +35,19 @@ def get_complaints():
         for complaint in complaints_service.get_complaints()
     ]
 
+
 @complaints_router.get("/{incident_id}")
 def get_complaint_by_incident_id(incident_id: UUID):
-    return map_complaint_model_to_complaint_dto(
-        complaints_service.get_complaint_by_incident_id(incident_id)
-    )
+    try:
+        return map_complaint_model_to_complaint_dto(
+            complaints_service.get_complaint_by_incident_id(incident_id)
+        )
+    except ResourceNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Complaint not found"
+        )
+
 
 @complaints_router.post("", status_code=status.HTTP_201_CREATED)
 def create_complaint(complaint_request: ComplaintRequestDTO):
@@ -47,3 +56,14 @@ def create_complaint(complaint_request: ComplaintRequestDTO):
         complaint_request.resource,
     )
     return map_complaint_model_to_complaint_dto(new_complaint)
+
+
+@complaints_router.delete("/{incident_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_complaint(incident_id: UUID):
+    try:
+        complaints_service.delete_complaint(incident_id)
+    except ResourceNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Complaint not found"
+        )

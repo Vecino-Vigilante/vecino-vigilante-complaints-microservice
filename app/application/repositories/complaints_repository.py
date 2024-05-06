@@ -16,3 +16,7 @@ class ComplaintsRepository(ABC):
     @abstractmethod
     def get_complaint(self, incident_id: UUID) -> ComplaintModel:
         pass
+    
+    @abstractmethod
+    def delete_complaint(self, incident_id: UUID) -> None:
+        pass

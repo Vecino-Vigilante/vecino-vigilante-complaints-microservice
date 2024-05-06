@@ -5,6 +5,7 @@ from app.application.repositories.complaints_repository import ComplaintsReposit
 from app.application.repositories.images_repository import ImagesRepository
 from app.application.repositories.markers_repository import MarkersRepository
 from app.application.repositories.users_repository import UsersRepository
+from app.domain.exceptions.resource_not_found_exception import ResourceNotFoundException
 from app.domain.models.complaint_model import ComplaintModel
 from app.domain.models.location_model import LocationModel
 
@@ -28,8 +29,14 @@ class ComplaintsService:
             complaint.user = self.get_complaint_user(complaint.user.id)
         return complaints
     
+    def get_complaint(self, incident_id: UUID):
+        if complaint := self.get_complaint_by_incident_id(incident_id):
+            return complaint
+        
+        raise ResourceNotFoundException
+    
     def get_complaint_by_incident_id(self, incident_id: UUID):
-        complaint = self.complaints_repository.get_complaint(incident_id)
+        complaint = self.get_complaint(incident_id)
         complaint.user = self.get_complaint_user(complaint.user.id)
         return complaint
 
@@ -57,3 +64,9 @@ class ComplaintsService:
     
     def get_complaint_user(self, user_id: UUID):
         return self.users_repository.get_user(user_id)
+    
+    def delete_complaint(self, incident_id: UUID):
+        if self.get_complaint(incident_id):
+            self.complaints_repository.delete_complaint(incident_id)
+            self.markers_repository.delete_marker(incident_id)
+            return
